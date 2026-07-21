@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Football Tournament Manager</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="images/tournament-logo.jpg">
+</head>
+<body data-page="admin">
+
+  <!-- ===================== LOGIN SCREEN ===================== -->
+  <div class="login-wrap" id="loginScreen">
+    <div class="login-card">
+      <img src="images/tournament-logo.jpg" alt="logo" style="width:84px;height:84px;border-radius:50%;object-fit:cover;margin:0 auto 14px;box-shadow:0 0 0 3px var(--gold);">
+      <h2>Admin Login</h2>
+      <p>Enter the admin password to manage the tournament.</p>
+      <form id="loginForm">
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="adminPassword" placeholder="••••••••" required autofocus>
+        </div>
+        <button class="btn-block" type="submit">Login</button>
+        <div class="error-msg" id="loginError"></div>
+      </form>
+      <p class="text-dim mt-16"><a href="index.html">← Back to site</a></p>
+    </div>
+  </div>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <div class="admin-shell hidden" id="dashboard">
+
+    <header class="admin-header">
+      <div class="container">
+        <div class="brand"><img src="images/tournament-logo.jpg" class="brand-logo" alt="logo"> Admin Dashboard</div>
+        <div class="nav-tools">
+          <button class="icon-btn" id="langToggle" title="Language">AR</button>
+          <button class="icon-btn" id="themeToggle" title="Dark mode">🌙</button>
+          <a href="index.html" class="pill-btn">View site</a>
+          <button class="pill-btn danger" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="setup">🏆 Tournament</button>
+        <button class="tab-btn" data-tab="clubs">🛡️ Clubs</button>
+        <button class="tab-btn" data-tab="fixtures">📅 Fixtures</button>
+        <button class="tab-btn" data-tab="matches">⚽ Matches</button>
+        <button class="tab-btn" data-tab="knockout">🏅 Knockout</button>
+        <button class="tab-btn" data-tab="champion">👑 Champion</button>
+        <button class="tab-btn" data-tab="data">💾 Data</button>
+      </div>
+
+      <!-- ---------- TAB: Tournament setup ---------- -->
+      <div class="tab-panel active" id="tab-setup">
+        <div class="card">
+          <h3>Tournament Setup</h3>
+          <p class="text-dim">Set the tournament name, banner, start date and how many groups it has. Each group can hold up to 4 clubs.</p>
+          <form id="setupForm">
+            <div class="field">
+              <label>Tournament name</label>
+              <input type="text" id="setupName" required placeholder="e.g. Champions Cup 2026">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Start date &amp; time</label>
+                <input type="datetime-local" id="setupDate">
+              </div>
+              <div class="field">
+                <label>Number of groups</label>
+                <input type="number" id="setupGroups" min="1" max="16" value="1" required>
+              </div>
+            </div>
+            <div class="field">
+              <label>Banner image</label>
+              <input type="file" id="setupBanner" accept="image/*">
+              <img id="bannerPreview" class="logo-preview mt-16 hidden" style="width:100%;height:120px;border-radius:12px;">
+            </div>
+            <button class="btn-block" type="submit">💾 Save Tournament</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ---------- TAB: Clubs ---------- -->
+      <div class="tab-panel" id="tab-clubs">
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>Add Club</h3>
+            <form id="clubForm">
+              <div class="field">
+                <label>Club name</label>
+                <input type="text" id="clubName" required placeholder="e.g. Al Nasr FC">
+              </div>
+              <div class="field">
+                <label>Group</label>
+                <select id="clubGroupSelect"></select>
+              </div>
+              <div class="field">
+                <label>Logo</label>
+                <input type="file" id="clubLogo" accept="image/*">
+              </div>
+              <button class="btn-block" type="submit">➕ Add Club</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Clubs List</h3>
+            <div id="clubsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- TAB: Fixtures ---------- -->
+      <div class="tab-panel" id="tab-fixtures">
+        <div class="card mb-16">
+          <div class="section-head"><h3>Generate Fixtures</h3><button class="pill-btn primary" id="genAllBtn">⚙️ Generate All Groups</button></div>
+          <label class="flex gap-8 mb-16" style="cursor:pointer;">
+            <input type="checkbox" id="legsToggle" checked style="width:auto;">
+            <span>Double round-robin — every club plays every other club <strong>home &amp; away</strong> (uncheck for a single match per pair)</span>
+          </label>
+          <p class="text-dim">Regenerating a group removes its existing matches &amp; results for that group.</p>
+          <div id="fixturesGroupList"></div>
+        </div>
+
+        <div class="card">
+          <h3>Add a Match Manually</h3>
+          <p class="text-dim">Full control: create an extra fixture yourself — a replay, a friendly, or anything the auto-generator didn't cover.</p>
+          <form id="manualMatchForm">
+            <div class="field"><label>Group (optional)</label><select id="manualMatchGroup"></select></div>
+            <div class="field-row">
+              <div class="field"><label>Home club</label><select id="manualMatchHome"></select></div>
+              <div class="field"><label>Away club</label><select id="manualMatchAway"></select></div>
+            </div>
+            <div class="field"><label>Date &amp; time (optional)</label><input type="datetime-local" id="manualMatchDate"></div>
+            <button class="btn-block" type="submit">➕ Add Match</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ---------- TAB: Knockout ---------- -->
+      <div class="tab-panel" id="tab-knockout">
+        <div class="card mb-16">
+          <h3>Quick Setup — Cross-Group Bracket</h3>
+          <p class="text-dim">Auto-generate the classic knockout draw: 1st of each group faces 2nd of the next group (needs an even number of groups, e.g. 2, 4, 6…).</p>
+          <form id="crossKnockoutForm" class="field-row" style="align-items:flex-end;">
+            <div class="field"><label>Round name</label><input type="text" id="crossRoundName" placeholder="e.g. Semi Finals"></div>
+            <button class="pill-btn primary" id="crossKnockoutBtn" type="submit" style="height:42px;">⚙️ Generate Cross-Bracket</button>
+          </form>
+        </div>
+
+        <div class="card mb-16">
+          <h3>Or Add a Round Manually</h3>
+          <p class="text-dim">Build any bracket shape yourself — quarterfinals, a 3rd-place playoff, extra qualifiers, anything.</p>
+          <form id="addRoundForm" class="field-row" style="align-items:flex-end;">
+            <div class="field"><label>Round name</label><input type="text" id="newRoundName" required placeholder="e.g. Quarter Finals"></div>
+            <button class="pill-btn" type="submit" style="height:42px;">➕ Add Round</button>
+          </form>
+        </div>
+
+        <div id="knockoutRoundsList"></div>
+      </div>
+
+      <!-- ---------- TAB: Matches ---------- -->
+      <div class="tab-panel" id="tab-matches">
+        <div class="card">
+          <h3>Matches</h3>
+          <p class="text-dim">Click a match to enter or edit its result, goal scorers and assists.</p>
+          <div id="matchesList"></div>
+        </div>
+      </div>
+
+      <!-- ---------- TAB: Champion ---------- -->
+      <div class="tab-panel" id="tab-champion">
+        <div class="card">
+          <h3>Tournament Champion</h3>
+          <p class="text-dim">Manually set the champion once the tournament concludes. Shown on the public Champion page.</p>
+          <form id="championForm">
+            <div class="field">
+              <label>Champion club</label>
+              <select id="championSelect"></select>
+            </div>
+            <button class="btn-block" type="submit">👑 Set Champion</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ---------- TAB: Data ---------- -->
+      <div class="tab-panel" id="tab-data">
+        <div class="card">
+          <h3>Backup &amp; Restore</h3>
+          <p class="text-dim">Export your tournament to a JSON file, import one, or wipe all data and start over.</p>
+          <div class="flex gap-12" style="flex-wrap:wrap;">
+            <button class="pill-btn primary" id="exportBtn">⬇️ Export JSON</button>
+            <label class="pill-btn" style="cursor:pointer;">⬆️ Import JSON
+              <input type="file" id="importInput" accept="application/json" class="hidden">
+            </label>
+            <button class="pill-btn danger" id="resetBtn">🗑️ Reset Tournament</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: Edit Club ===================== -->
+  <div class="modal-overlay" id="editClubModal">
+    <div class="modal">
+      <div class="modal-head"><h3>Edit Club</h3><button id="closeEditClub">✕</button></div>
+      <form id="editClubForm">
+        <div class="field"><label>Club name</label><input type="text" id="editClubName" required></div>
+        <div class="field"><label>Group</label><select id="editClubGroup"></select></div>
+        <div class="field"><label>New logo (optional)</label><input type="file" id="editClubLogo" accept="image/*"></div>
+        <button class="btn-block" type="submit">💾 Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: Club Squad (players) ===================== -->
+  <div class="modal-overlay" id="squadModal">
+    <div class="modal">
+      <div class="modal-head"><h3 id="squadModalTitle">Squad</h3><button id="closeSquadModal">✕</button></div>
+      <form id="addPlayerForm">
+        <div class="field-row">
+          <div class="field"><label>Player name</label><input type="text" id="playerName" required placeholder="e.g. John Smith"></div>
+          <div class="field" style="max-width:110px"><label>Number</label><input type="number" id="playerNumber" min="1" max="99"></div>
+        </div>
+        <button class="btn-block" type="submit">➕ Add Player</button>
+      </form>
+      <h4 class="mt-16">Registered Players</h4>
+      <div id="playersList"></div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: Match Result ===================== -->
+  <div class="modal-overlay" id="matchModal">
+    <div class="modal">
+      <div class="modal-head"><h3 id="matchModalTitle">Match</h3><button id="closeMatchModal">✕</button></div>
+      <form id="matchForm">
+        <div class="field"><label>Match date &amp; time</label><input type="datetime-local" id="matchDate"></div>
+        <div class="field-row">
+          <div class="field"><label>Home team</label><select id="matchHomeClub"></select></div>
+          <div class="field"><label>Away team</label><select id="matchAwayClub"></select></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Home score</label><input type="number" id="matchHomeScore" min="0" required></div>
+          <div class="field"><label>Away score</label><input type="number" id="matchAwayScore" min="0" required></div>
+        </div>
+
+        <h4 class="mt-16">Goals &amp; Assists</h4>
+        <div id="goalsWrap"></div>
+        <button type="button" class="pill-btn mb-16" id="addGoalBtn">➕ Add Goal</button>
+
+        <button class="btn-block" type="submit">💾 Save Result</button>
+        <button type="button" class="pill-btn danger w-100 mt-16" id="clearResultBtn">↩️ Clear Result</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: Knockout Match Result ===================== -->
+  <div class="modal-overlay" id="knockoutModal">
+    <div class="modal">
+      <div class="modal-head"><h3 id="koModalTitle">Match</h3><button id="closeKoModal">✕</button></div>
+      <form id="koForm">
+        <div class="field-row">
+          <div class="field"><label>Home side</label><select id="koHomeSourceSel"></select></div>
+          <div class="field"><label>Away side</label><select id="koAwaySourceSel"></select></div>
+        </div>
+        <div class="field"><label>Match date &amp; time</label><input type="datetime-local" id="koDate"></div>
+
+        <p id="koNotReadyMsg" class="text-dim hidden">⏳ Waiting for both teams to be decided before a result can be entered.</p>
+
+        <div id="koScoreFields">
+          <div class="field-row">
+            <div class="field"><label>Home score</label><input type="number" id="koHomeScore" min="0"></div>
+            <div class="field"><label>Away score</label><input type="number" id="koAwayScore" min="0"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Home penalties (if level)</label><input type="number" id="koHomePen" min="0"></div>
+            <div class="field"><label>Away penalties (if level)</label><input type="number" id="koAwayPen" min="0"></div>
+          </div>
+          <h4 class="mt-16">Goals &amp; Assists</h4>
+          <div id="koGoalsWrap"></div>
+          <button type="button" class="pill-btn mb-16" id="koAddGoalBtn">➕ Add Goal</button>
+        </div>
+
+        <button class="btn-block" type="submit">💾 Save Result</button>
+        <button type="button" class="pill-btn danger w-100 mt-16" id="koClearBtn">↩️ Clear Result</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

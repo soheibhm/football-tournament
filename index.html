@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FC Championship — Football Tournament</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="images/tournament-logo.jpg">
+</head>
+<body data-page="public">
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#home" class="brand"><img src="images/tournament-logo.jpg" class="brand-logo" alt="logo"> FC Championship</a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" data-i18n="nav_home">Home</a></li>
+        <li><a href="#groups" data-i18n="nav_groups">Groups</a></li>
+        <li><a href="#knockout" data-i18n="nav_knockout">Knockout</a></li>
+        <li><a href="#stats" data-i18n="nav_stats">Statistics</a></li>
+        <li><a href="#champion" data-i18n="nav_champion">Champion</a></li>
+      </ul>
+
+      <div class="nav-tools">
+        <button class="icon-btn" id="langToggle" title="Language">AR</button>
+        <button class="icon-btn" id="themeToggle" title="Dark mode">🌙</button>
+        <a href="admin.html" class="admin-link" data-i18n="admin">Admin</a>
+        <button class="hamburger" id="hamburger">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== HOME PAGE ===================== -->
+  <section id="page-home" class="page-section">
+    <header class="hero">
+      <div class="container hero-inner">
+        <img id="heroBanner" class="banner-img hidden" src="" alt="Tournament banner">
+        <h1 id="heroName">FC Championship</h1>
+        <p class="tagline">Esports Football Tournament — every match, goal and assist, live from your browser.</p>
+        <div class="countdown" id="countdown"></div>
+      </div>
+    </header>
+
+    <div class="container">
+      <section class="section">
+        <div class="section-head"><h2><span class="tag"></span><span data-i18n="latest_results">Latest Results</span></h2>
+          <a class="pill-btn" href="#groups" data-i18n="view_all">View all</a>
+        </div>
+        <div class="grid grid-2" id="latestResults"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><h2><span class="tag"></span><span data-i18n="upcoming_matches">Upcoming Matches</span></h2>
+          <a class="pill-btn" href="#groups" data-i18n="view_all">View all</a>
+        </div>
+        <div class="grid grid-2" id="upcomingMatches"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><h2><span class="tag"></span><span data-i18n="standings">Standings</span></h2></div>
+        <div id="homeStandings"></div>
+      </section>
+
+      <section class="section">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-head"><h2><span class="tag"></span><span data-i18n="top_scorers">Top Scorers</span></h2></div>
+            <div id="homeScorers"></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><h2><span class="tag"></span><span data-i18n="top_assists">Top Assists</span></h2></div>
+            <div id="homeAssists"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== GROUPS PAGE ===================== -->
+  <section id="page-groups" class="page-section hidden">
+    <div class="container section">
+      <div class="section-head"><h2><span class="tag"></span><span data-i18n="nav_groups">Groups</span></h2></div>
+      <div id="groupsContent"></div>
+    </div>
+  </section>
+
+  <!-- ===================== KNOCKOUT PAGE ===================== -->
+  <section id="page-knockout" class="page-section hidden">
+    <div class="container section">
+      <div class="section-head"><h2><span class="tag"></span><span data-i18n="nav_knockout">Knockout</span></h2></div>
+      <div id="knockoutContent"></div>
+    </div>
+  </section>
+
+  <!-- ===================== STATISTICS PAGE ===================== -->
+  <section id="page-stats" class="page-section hidden">
+    <div class="container section">
+      <div class="section-head"><h2><span class="tag"></span><span data-i18n="nav_stats">Statistics</span></h2></div>
+      <div id="statsContent"></div>
+    </div>
+  </section>
+
+  <!-- ===================== CHAMPION PAGE ===================== -->
+  <section id="page-champion" class="page-section hidden">
+    <div class="container section">
+      <div class="section-head"><h2><span class="tag"></span><span data-i18n="nav_champion">Champion</span></h2></div>
+      <div id="championContent"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container" data-i18n="footer">Built with the Football Tournament Manager — No backend, 100% LocalStorage.</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

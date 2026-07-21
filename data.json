@@ -1,0 +1,24 @@
+{
+  "_comment": "This file is a SAMPLE data structure you can import from the Admin page (Import JSON) to see a working demo. The live site actually stores everything in the browser's LocalStorage, not in this file.",
+  "name": "Champions Cup 2026",
+  "banner": "",
+  "startDate": "2026-08-01T18:00",
+  "numGroups": 2,
+  "champion": null,
+  "groups": [
+    { "id": "g1", "name": "Group A" },
+    { "id": "g2", "name": "Group B" }
+  ],
+  "clubs": [
+    { "id": "c1", "name": "Al Nasr FC",  "logo": "", "groupId": "g1" },
+    { "id": "c2", "name": "Desert Eagles", "logo": "", "groupId": "g1" },
+    { "id": "c3", "name": "Coastal Lions", "logo": "", "groupId": "g1" },
+    { "id": "c4", "name": "Atlas Wolves", "logo": "", "groupId": "g1" },
+    { "id": "c5", "name": "Sahara Stars", "logo": "", "groupId": "g2" },
+    { "id": "c6", "name": "Golden Falcons", "logo": "", "groupId": "g2" },
+    { "id": "c7", "name": "Royal Tigers", "logo": "", "groupId": "g2" },
+    { "id": "c8", "name": "Union City", "logo": "", "groupId": "g2" }
+  ],
+  "matches": [],
+  "idCounter": 100
+}
