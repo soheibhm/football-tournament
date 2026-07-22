@@ -22,6 +22,45 @@ const THEME_KEY      = 'ftm_theme';
 const LANG_KEY        = 'ftm_lang';
 const ADMIN_SESSION_KEY = 'ftm_admin_session';
 
+/* ---------------------------------------------------------------------
+   FIREBASE SETUP — paste YOUR project's config below.
+   Get it from: Firebase Console → Project settings → General →
+   "Your apps" → Web app → SDK setup and configuration.
+   --------------------------------------------------------------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBs6cxOYgYDY4o0A-7chtnWn9IZy_SYz5s",
+  authDomain: "tournament-b8b62.firebaseapp.com",
+  databaseURL: "https://tournament-b8b62-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tournament-b8b62",
+  storageBucket: "tournament-b8b62.firebasestorage.app",
+  messagingSenderId: "654521550525",
+  appId: "1:654521550525:web:8b45614c49ed05505e19d4"
+};
+firebase.initializeApp(firebaseConfig);
+const _db = firebase.database();
+
+/* In-memory cache so the rest of the app (which reads data synchronously
+   everywhere) doesn't need to change at all. */
+let _cache = null;
+let _onRemoteChange = null; // set by public/admin pages to re-render on live updates
+
+/** Must be awaited once before the app starts rendering. */
+async function initRemoteData(){
+  const snap = await _db.ref(STORAGE_KEY).get();
+  _cache = snap.exists() ? Object.assign(emptyTournament(), snap.val()) : emptyTournament();
+  normalizeClubs(_cache);
+
+  // Live sync: whenever ANYONE saves (e.g. the admin), every open tab/browser
+  // gets the update automatically.
+  _db.ref(STORAGE_KEY).on('value', (snap) => {
+    if(!snap.exists()) return;
+    const incoming = Object.assign(emptyTournament(), snap.val());
+    normalizeClubs(incoming);
+    _cache = incoming;
+    if(typeof _onRemoteChange === 'function') _onRemoteChange();
+  });
+}
+
 /* Simple admin password — change this before deploying! */
 const ADMIN_PASSWORD = 'Soheibhm99';
 
@@ -82,18 +121,9 @@ function emptyTournament(){
 }
 
 function loadData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return emptyTournament();
-    const parsed = JSON.parse(raw);
-    // ensure shape safety in case of partial/old data
-    const data = Object.assign(emptyTournament(), parsed);
-    normalizeClubs(data);
-    return data;
-  }catch(e){
-    console.error('Failed to load tournament data', e);
-    return emptyTournament();
-  }
+  // Synchronous read from the in-memory cache (kept up to date by Firebase).
+  // initRemoteData() populates this before the app first renders.
+  return _cache || emptyTournament();
 }
 
 /** Ensures every club has a players[] array (for data created before squads existed). */
@@ -102,11 +132,14 @@ function normalizeClubs(data){
 }
 
 function saveData(data){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  _cache = data;
+  // Fire-and-forget write to Firebase so every other browser sees it too.
+  _db.ref(STORAGE_KEY).set(data).catch(e => console.error('Failed to save tournament data', e));
 }
 
 function resetData(){
-  localStorage.removeItem(STORAGE_KEY);
+  _cache = emptyTournament();
+  _db.ref(STORAGE_KEY).set(_cache).catch(e => console.error('Failed to reset tournament data', e));
 }
 
 function nextId(data, prefix){
@@ -1741,7 +1774,7 @@ function renderDataTab(){
 /* =========================================================================
    8. INIT / ROUTER
    ========================================================================= */
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', async ()=>{
   initThemeLang();
 
   const hamburger = byId('hamburger');
@@ -1749,8 +1782,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     hamburger.addEventListener('click', ()=> byId('navLinks').classList.toggle('open'));
   }
 
+  // Wait for the tournament data to load from Firebase before rendering anything.
+  await initRemoteData();
+
   if(document.body.dataset.page === 'public'){
     window.addEventListener('hashchange', renderPublicApp);
+    _onRemoteChange = renderPublicApp; // live-refresh visitors when admin saves
     renderPublicApp();
   }
 
